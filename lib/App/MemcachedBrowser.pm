@@ -6,6 +6,7 @@ use warnings;
 use HTTP::Status;
 use Cache::Memcached;
 use HTML::Template;
+use Data::Dumper;
 
 sub new {
     my ($class, $server) = @_;
@@ -44,7 +45,9 @@ sub handler {
 sub handle_key {
     my ($self, $key) = @_;
 
-    my $value = $self->{client}->get($key);
+    my $value = Dumper($self->{client}->get($key));
+    $value =~ s/^\$VAR1 = //;
+    $value =~ s/;$//;
     return RC_OK, key => $key, value => $value;
 }
 
