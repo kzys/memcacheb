@@ -1,0 +1,17 @@
+#! /usr/bin/perl
+use strict;
+use warnings;
+
+use App::MemcachedBrowser;
+use POE qw(Component::Server::HTTP);
+
+
+my $browser = App::MemcachedBrowser->new;
+
+my $server = POE::Component::Server::HTTP->new(Port => 3000,
+                                               ContentHandler => {
+                                                   '/' => sub {
+                                                       $browser->handler(@_);
+                                                   }
+                                               });
+POE::Kernel->run;
