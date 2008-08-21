@@ -3,7 +3,7 @@ package App::MemcachedBrowser;
 use strict;
 use warnings;
 
-use HTTP::Status;
+use POE::Component::Server::HTTP;
 use Cache::Memcached;
 use HTML::Template;
 use Data::Dumper;
@@ -15,6 +15,11 @@ sub new {
     $self->{server} = $server;
     $self->{client} = Cache::Memcached->new(servers => [ $self->{server} ]);
     return $self;
+}
+
+sub redirect {
+    my ($self, $path) = @_;
+    return 302, Location => $path;
 }
 
 sub handler {
@@ -29,26 +34,36 @@ sub handler {
 
     my $method = "handle_$paths[0]";
     if (! $self->can($method)) {
-        return RC_NOT_FOUND;
+        return RC_OK;
     }
 
     my $template = HTML::Template->new(filename => "tmpl/$paths[0].html");
 
     shift @paths;
     my ($code, %params) = $self->$method(@paths);
-
-    $template->param(server => $self->{server}, %params);
-    $resp->content($template->output);
+    if ($code == 200) {
+        $template->param(server => $self->{server}, %params);
+        $resp->content($template->output);
+    } elsif ($code == 302) {
+        my $uri = $req->uri;
+        $uri->path($params{Location});
+        $resp->header(Location => $uri);
+    }
+    $resp->code($code);
     return RC_OK;
 }
 
 sub handle_key {
-    my ($self, $key) = @_;
+    my ($self, $key, $action) = @_;
 
+    if ($action && $action eq 'delete') {
+        $self->{client}->delete($key);
+        return $self->redirect('/');
+    }
     my $value = Dumper($self->{client}->get($key));
     $value =~ s/^\$VAR1 = //;
     $value =~ s/;$//;
-    return RC_OK, key => $key, value => $value;
+    return 200, key => $key, value => $value;
 }
 
 sub handle_index {
@@ -67,14 +82,14 @@ sub handle_index {
         push @keys, $self->slab_keys($slab_id);
     }
 
-    return RC_OK, keys => [ map { { key => $_} } @keys ];
+    return 200, keys => [ map { { key => $_} } @keys ];
 }
 
 sub handle_stats {
     my $self = shift;
     my %stats = %{ $self->stats('misc') };
 
-    return RC_OK, stats => [ map {
+    return 200, stats => [ map {
         { key => $_, value => $stats{$_} }
     } keys %stats ];
 }
