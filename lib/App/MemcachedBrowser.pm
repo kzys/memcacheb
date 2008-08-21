@@ -8,10 +8,10 @@ use Cache::Memcached;
 use HTML::Template;
 
 sub new {
-    my $class = shift;
+    my ($class, $server) = @_;
     my $self = bless {}, $class;
 
-    $self->{server} = 'localhost:11211';
+    $self->{server} = $server;
     $self->{client} = Cache::Memcached->new(servers => [ $self->{server} ]);
     return $self;
 }

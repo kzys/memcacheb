@@ -4,14 +4,35 @@ use warnings;
 
 use App::MemcachedBrowser;
 use POE qw(Component::Server::HTTP);
+use Getopt::Long;
+use Pod::Usage;
 
+my $port = 3000;
+GetOptions('port=i' => \$port) or pod2usage(1);
 
-my $browser = App::MemcachedBrowser->new;
+my $server_name = shift or pod2usage(1);
+my $browser = App::MemcachedBrowser->new($server_name);
 
-my $server = POE::Component::Server::HTTP->new(Port => 3000,
+my $server = POE::Component::Server::HTTP->new(Port => $port,
                                                ContentHandler => {
                                                    '/' => sub {
                                                        $browser->handler(@_);
                                                    }
                                                });
 POE::Kernel->run;
+
+__END__
+
+=head1 NAME
+
+memcacheb - Web based memcached browser
+
+=head1 SYNOPSIS
+
+memcacheb [options] host:port
+
+  Options:
+    --port number   port of memcacheb Web interface
+
+=cut
+
