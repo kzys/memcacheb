@@ -1,8 +1,8 @@
 <h1>memcacheb: <TMPL_VAR NAME="server"></h1>
 
-<h2>Keys</h2>
-<TMPL_LOOP NAME="keys">
-  <a href="/key/<TMPL_VAR NAME="key">"><TMPL_VAR NAME="key"></a>
+<h2>Slabs</h2>
+<TMPL_LOOP NAME="slabs">
+  <a href="/slab/<TMPL_VAR NAME="number">"><TMPL_VAR NAME="number"></a>
 </TMPL_LOOP>
 
 <h2><a href="/stats">Status</a></h2>

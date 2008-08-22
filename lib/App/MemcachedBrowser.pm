@@ -66,6 +66,12 @@ sub handle_key {
     return 200, key => $key, value => $value;
 }
 
+sub handle_slab {
+    my ($self, $slab_id) = @_;
+
+    return 200, keys => [ map { { key => $_} } $self->slab_keys($slab_id) ];
+}
+
 sub handle_index {
     my $self = shift;
 
@@ -77,12 +83,7 @@ sub handle_index {
         }
     }
 
-    my @keys;
-    for my $slab_id (keys %slabs) {
-        push @keys, $self->slab_keys($slab_id);
-    }
-
-    return 200, keys => [ map { { key => $_} } @keys ];
+    return 200, slabs => [ map { { number => $_} } sort { $a <=> $b } keys %slabs ];
 }
 
 sub handle_stats {
