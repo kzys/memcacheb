@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style type="text/css">
+      body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 1em;
+      }
+
+      .key {
+        float: left;
+        font-size: 80%;
+        width: 15em;
+        border: 1px solid #ccc;
+        padding: 0.5em;
+        margin: 0 1em 1em 0;
+      }
+
+      #body {
+        overflow: hidden;
+      }
+
+      #footer {
+        border-top: 1px solid #ccc;
+        padding: 1em 0;
+        margin: 1em 0;
+      }
+    </style>
+    <title>
+      <TMPL_IF NAME="title">
+        <TMPL_VAR NAME="title"> -
+      </TMPL_IF>
+      memcacheb
+    </title>
+  </head>
+
+  <body>
+    <h1><TMPL_VAR NAME="title"></h1>
+
+    <div id="body">
