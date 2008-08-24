@@ -6,7 +6,8 @@ use warnings;
 use POE::Component::Server::HTTP;
 use Cache::Memcached;
 use HTML::Template;
-use Data::Dumper;
+use YAML;
+use URI::Escape;
 
 sub new {
     my ($class, $server) = @_;
@@ -57,13 +58,13 @@ sub handler {
 sub handle_key {
     my ($self, $key, $action) = @_;
 
+    $key = uri_unescape($key);
+
     if ($action && $action eq 'delete') {
         $self->{client}->delete($key);
         return $self->redirect('/');
     }
-    my $value = Dumper($self->{client}->get($key));
-    $value =~ s/^\$VAR1 = //;
-    $value =~ s/;$//;
+    my $value = YAML::Dump($self->{client}->get($key));
 
     return 200,
         title => "Key: $key",
@@ -83,7 +84,7 @@ sub handle_index {
     my $self = shift;
 
     my %slabs;
-    my @lines = split /\n/, $self->stats('slabs');
+    my @lines = split /\n/, ($self->stats('slabs') || '');
     for my $line (@lines) {
         if ($line =~/^STAT (\d+):/) {
             $slabs{ $1 } = 1;
