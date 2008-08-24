@@ -1,10 +1,11 @@
-<h1>memcacheb: <TMPL_VAR NAME="server"></h1>
+<TMPL_INCLUDE NAME="_header.html">
 
-<h2><TMPL_VAR NAME="key"></h2>
 <pre>
 <TMPL_VAR NAME="value">
 </pre>
 
 <p>
-  <a href="/key/<TMPL_VAR NAME="key">/delete">delete</a>
+  <a href="/key/<TMPL_VAR NAME='key' ESCAPE='URL'>/delete">Delete this key</a>
 </a>
+
+<TMPL_INCLUDE NAME="_footer.html">

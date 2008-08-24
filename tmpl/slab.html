@@ -1,6 +1,9 @@
-<h1>memcacheb: <TMPL_VAR NAME="server"></h1>
+<TMPL_INCLUDE NAME="_header.html">
 
-<h2>Keys</h2>
 <TMPL_LOOP NAME="keys">
-  <a href="/key/<TMPL_VAR NAME="key">"><TMPL_VAR NAME="key"></a>
+  <a href="/key/<TMPL_VAR NAME='key' ESCAPE='URL'>">
+    <TMPL_VAR NAME="key" ESCAPE="HTML">
+  </a>
 </TMPL_LOOP>
+
+<TMPL_INCLUDE NAME="_footer.html">

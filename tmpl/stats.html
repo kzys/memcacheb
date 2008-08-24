@@ -1,10 +1,12 @@
-<h1>memcacheb: <TMPL_VAR NAME="server"></h1>
+<TMPL_INCLUDE NAME="_header.html">
 
 <table>
 <TMPL_LOOP NAME="stats">
   <tr>
-    <td><TMPL_VAR NAME="key"></td>
-    <td><TMPL_VAR NAME="value"></td>
+    <td><TMPL_VAR NAME="key" ESCAPE="HTML"></td>
+    <td><TMPL_VAR NAME="value" ESCAPE="HTML"></td>
   </tr>
 </TMPL_LOOP>
 </table>
+
+<TMPL_INCLUDE NAME="_footer.html">
