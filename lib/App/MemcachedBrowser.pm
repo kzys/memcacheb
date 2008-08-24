@@ -37,12 +37,13 @@ sub handler {
         return RC_OK;
     }
 
-    my $template = HTML::Template->new(filename => "tmpl/$paths[0].html");
+    my $template = HTML::Template->new(filename => "tmpl/$paths[0].html",
+                                       die_on_bad_params => 0);
 
     shift @paths;
     my ($code, %params) = $self->$method(@paths);
     if ($code == 200) {
-        $template->param(server => $self->{server}, %params);
+        $template->param(%params);
         $resp->content($template->output);
     } elsif ($code == 302) {
         my $uri = $req->uri;
@@ -63,13 +64,19 @@ sub handle_key {
     my $value = Dumper($self->{client}->get($key));
     $value =~ s/^\$VAR1 = //;
     $value =~ s/;$//;
-    return 200, key => $key, value => $value;
+
+    return 200,
+        title => "Key: $key",
+        key => $key,
+        value => $value;
 }
 
 sub handle_slab {
     my ($self, $slab_id) = @_;
 
-    return 200, keys => [ map { { key => $_} } $self->slab_keys($slab_id) ];
+    return 200,
+        title => "All keys on Slab #$slab_id",
+        keys => [ map { { key => $_} } sort $self->slab_keys($slab_id) ];
 }
 
 sub handle_index {
@@ -83,16 +90,20 @@ sub handle_index {
         }
     }
 
-    return 200, slabs => [ map { { number => $_} } sort { $a <=> $b } keys %slabs ];
+    return 200,
+        title => 'Server: ' . $self->{server},
+        slabs => [ map { { number => $_} } sort { $a <=> $b } keys %slabs ];
 }
 
 sub handle_stats {
     my $self = shift;
     my %stats = %{ $self->stats('misc') };
 
-    return 200, stats => [ map {
-        { key => $_, value => $stats{$_} }
-    } keys %stats ];
+    return 200,
+        title => 'Status',
+        stats => [ map {
+            { key => $_, value => $stats{$_} }
+        } keys %stats ];
 }
 
 sub slab_keys {
