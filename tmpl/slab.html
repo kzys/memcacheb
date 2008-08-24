@@ -1,9 +1,11 @@
 <TMPL_INCLUDE NAME="_header.html">
 
+<div class="keys">
 <TMPL_LOOP NAME="keys">
   <a href="/key/<TMPL_VAR NAME='key' ESCAPE='URL'>">
     <TMPL_VAR NAME="key" ESCAPE="HTML">
   </a>
 </TMPL_LOOP>
+</div>
 
 <TMPL_INCLUDE NAME="_footer.html">

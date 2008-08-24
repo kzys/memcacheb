@@ -10,13 +10,34 @@
         padding: 1em;
       }
 
-      .key {
+      pre {
+        white-space: -moz-pre-wrap;
+        white-space: -pre-wrap;
+        white-space: -o-pre-wrap;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .slabs, .keys {
+        overflow: hidden;
+      }
+
+      .slabs a, .keys a {
+        text-decoration: none;
+        display: block;
         float: left;
-        font-size: 80%;
         width: 15em;
         border: 1px solid #ccc;
         padding: 0.5em;
         margin: 0 1em 1em 0;
+      }
+      .slabs a {
+        padding: 1em;
+        width: 2em;
+        text-align: center;
+      }
+      .slabs a:hover, .keys a:hover {
+        border-color: #000;
       }
 
       #body {
