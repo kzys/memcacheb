@@ -24,7 +24,7 @@ sub redirect {
 }
 
 sub handler {
-    my ($self, $req, $resp) = @_;
+    my ($self, $req) = @_;
 
     my @paths = split '/', $req->uri->path;
     shift @paths;
@@ -33,26 +33,30 @@ sub handler {
         @paths = qw(index);
     }
 
+    my $resp;
     my $method = "handle_$paths[0]";
     if (! $self->can($method)) {
-        return RC_OK;
+        $resp = HTTP::Engine::Response->new;
+        $resp->status(404);
+        return $resp;
     }
 
     my $template = HTML::Template->new(filename => "tmpl/$paths[0].html",
                                        die_on_bad_params => 0);
+    $resp = HTTP::Engine::Response->new;
 
     shift @paths;
     my ($code, %params) = $self->$method(@paths);
     if ($code == 200) {
         $template->param(%params);
-        $resp->content($template->output);
+        $resp->body($template->output);
     } elsif ($code == 302) {
         my $uri = $req->uri;
         $uri->path($params{Location});
         $resp->header(Location => $uri);
     }
-    $resp->code($code);
-    return RC_OK;
+    $resp->status($code);
+    return $resp;
 }
 
 sub handle_key {

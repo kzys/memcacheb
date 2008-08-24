@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use App::MemcachedBrowser;
-use POE qw(Component::Server::HTTP);
+use HTTP::Engine;
 use Getopt::Long;
 use Pod::Usage;
 
@@ -13,13 +13,13 @@ GetOptions('port=i' => \$port) or pod2usage(1);
 my $server_name = shift or pod2usage(1);
 my $browser = App::MemcachedBrowser->new($server_name);
 
-my $server = POE::Component::Server::HTTP->new(Port => $port,
-                                               ContentHandler => {
-                                                   '/' => sub {
-                                                       $browser->handler(@_);
-                                                   }
-                                               });
-POE::Kernel->run;
+my $engine = HTTP::Engine->new(interface => {
+    module => 'ServerSimple',
+    args => { port => $port },
+    request_handler => sub {
+        $browser->handler(@_);
+    } });
+$engine->run;
 
 __END__
 
